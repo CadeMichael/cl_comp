@@ -1,0 +1,10 @@
+name = "cl_comp"
+version = "0.1.0"
+defaultTargets = ["cl_comp"]
+
+[[lean_lib]]
+name = "ClComp"
+
+[[lean_exe]]
+name = "cl_comp"
+root = "Main"
