@@ -1,8 +1,14 @@
 namespace Imp
 
+/-
+# test expression showing the modular trigger'
+- `trigger` is a function that extracts the value from the Minus / Plus domain after
+an operation has been performed
+-/
+
 inductive Expr (Op : Type) :=
-  | Val (n : Nat)
-  | Do (op : Op) (k : Nat → Expr Op)
+  | Val (n : Nat) -- Identity Function
+  | Do (op : Op) (k : Nat → Expr Op) -- Continuation kindof like '>>='
 
 open Expr
 
@@ -87,7 +93,6 @@ instance subop_left (Op1 Op2 : Type) : Subop Op1 (Op1 ⊕ Op2) where
 instance subop_right (Op1 Op2 Op3 : Type) [Subop Op1 Op3]
   : Subop Op1 (Op2 ⊕ Op3) where
   inject := λ e => .inr (inject e)
-
 
 notation:max "trigger'" e => trigger (inject e)
 

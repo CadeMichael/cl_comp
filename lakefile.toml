@@ -8,3 +8,8 @@ name = "ClComp"
 [[lean_exe]]
 name = "cl_comp"
 root = "Main"
+
+[[require]]
+name = "«doc-gen4»"
+git = "https://github.com/leanprover/doc-gen4"
+rev = "v4.13.0-rc1"
