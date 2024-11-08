@@ -1,6 +1,7 @@
 import ClComp
 
 open Imp
+open Wasm
 
 def e₅ : Expr (Plus ⊕ Minus) :=
   x <- trigger' (Minus.sub 7 1);;

@@ -4,6 +4,7 @@ namespace Imp
 # Expr represents expressions
 - val is a value (computation is done)
 - do represents another operation which is paired with a continuation k
+- this allows modular building of our language
 -/
 inductive Expr (Op : Type) :=
   | Val (n : Nat) -- Identity Function
@@ -21,6 +22,7 @@ inductive Minus :=
 
 open Minus
 
+/-- fold acts as the *visitor* pattern in imperative interpreters -/
 def fold_eval {Op} (h : Op → Nat) (t : Expr Op) : Nat :=
   match t with
   | Val n => n
