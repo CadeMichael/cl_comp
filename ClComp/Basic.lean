@@ -1,11 +1,10 @@
 namespace Imp
 
-/-
-# test expression showing the modular trigger'
-- `trigger` is a function that extracts the value from the Minus / Plus domain after
-an operation has been performed
+/-!
+# Expr represents expressions
+- val is a value (computation is done)
+- do represents another operation which is paired with a continuation k
 -/
-
 inductive Expr (Op : Type) :=
   | Val (n : Nat) -- Identity Function
   | Do (op : Op) (k : Nat → Expr Op) -- Continuation kindof like '>>='
