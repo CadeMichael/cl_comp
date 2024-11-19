@@ -1,0 +1,5 @@
+-R theories/ CLComp
+-arg -w -arg all
+
+theories/OpWasm.v
+theories/OpCL.v
