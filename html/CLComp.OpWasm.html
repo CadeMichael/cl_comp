@@ -28,6 +28,79 @@
 <h1 class="libtitle">CLComp.OpWasm</h1>
 
 <div class="code">
+</div>
+
+<div class="doc">
+<a id="lab1"></a><h1 class="section">Example of ibinop.add in wasm</h1>
+
+
+<div class="paragraph"> </div>
+
+<pre>
+    (module
+        (func (export "_start") (result i32)
+        ;; load 10 onto the stack
+        i32.const 10
+        ;; load 90 onto the stack
+        i32.const 90
+        i32.const 9
+        ;; return the second value (90); the first is discarded
+        i32.add
+        return
+        )
+    )
+</pre>
+
+<div class="paragraph"> </div>
+
+<a id="lab2"></a><h2 class="section">Stack changes during this operation</h2>
+
+<ul class="doclist">
+<li> Using E for the evaluation context which is represented by ∊ for empty
+<ul class="doclist">
+<li> E₁ = ∊
+
+</li>
+<li> E₂ = <span class="inlinecode">10</span> <span class="inlinecode">::</span> <span class="inlinecode"><span class="id" title="var">nil</span></span>
+
+</li>
+<li> E₃ = <span class="inlinecode">90</span> <span class="inlinecode">::</span> <span class="inlinecode">10</span> <span class="inlinecode">::</span> <span class="inlinecode"><span class="id" title="var">nil</span></span>
+
+</li>
+<li> E₄ = <span class="inlinecode">9</span> <span class="inlinecode">::</span> <span class="inlinecode">90</span> <span class="inlinecode">::</span> <span class="inlinecode">10</span> <span class="inlinecode">::</span> <span class="inlinecode"><span class="id" title="var">nil</span></span>
+
+</li>
+<li> E₅ = <span class="inlinecode">(9</span> <span class="inlinecode">+</span> <span class="inlinecode">90)</span> <span class="inlinecode">::</span> <span class="inlinecode">10</span> <span class="inlinecode">::</span> <span class="inlinecode"><span class="id" title="var">nil</span></span>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+<a id="lab3"></a><h2 class="section">Inference Rules</h2>
+
+
+<div class="paragraph"> </div>
+
+<pre>
+            -------------------------------- (const)
+              C ⊢ i32.const c: [] -&gt; [i32]
+
+            ---------------------------------------- (binary operation)
+              C ⊢ i32.binop c: [i32 i32] -&gt; [i32]
+
+</pre>
+
+<div class="paragraph"> </div>
+
+ 
+</div>
+<div class="code">
+
+<br/>
 <span class="id" title="keyword">Module</span> <a id="OpWasm" class="idref" href="#OpWasm"><span class="id" title="module">OpWasm</span></a>.<br/>
 
 <br/>
