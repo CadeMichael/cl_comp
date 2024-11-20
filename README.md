@@ -40,6 +40,7 @@
 
 - contexts.v:19 _eval context type class_
 ```coq
+(* 19 *)
 (* Typeclass for a Wasm evaluation context.
    ctx_frame_mask and ctx_frame_cond are auxiliary functions for defining
    the ctx_reduce relation, which instructs on how reductions of instructions
@@ -57,6 +58,21 @@ Class eval_ctx (ctx_t: Type): Type :=
       reduce hs s (ctx_frame_mask ctx f) es hs' s' (ctx_frame_mask ctx f') es' ->
       reduce hs s f (ctx_fill es ctx) hs' s' f' (ctx_fill es' ctx);
   }.
+
+(* 826 *)
+Record t_context : Set := {
+  tc_types : list function_type;
+  tc_funcs : list function_type;
+  tc_tables : list table_type;
+  tc_mems : list memory_type;
+  tc_globals : list global_type;
+  tc_elems : list reference_type;
+  tc_datas : list ok;
+  tc_locals : list value_type;
+  tc_labels : list result_type;
+  tc_return : option result_type;
+  tc_refs : list funcidx;
+}.
 ```
 
 - datatypes.v:1066 _administrative instructions_
