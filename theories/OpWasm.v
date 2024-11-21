@@ -1,10 +1,6 @@
 From Coq Require Import Bool.Bool.
-From Coq Require Import Init.Nat.
-From Coq Require Import Arith.Arith.
-From Coq Require Import Arith.EqNat. Import Nat.
-From Coq Require Import Lia.
 From Coq Require Import Lists.List. Import ListNotations.
-(* From Coq Require Import ZArith. *)
+From Coq Require Import ZArith.
 
 (** * Example of ibinop.add in wasm
 
@@ -34,7 +30,7 @@ From Coq Require Import Lists.List. Import ListNotations.
   ** Inference Rules
 
 << 
-        Instr := const nat
+        Instr := const Z
           | binop
 
         Binop := add
@@ -53,10 +49,20 @@ From Coq Require Import Lists.List. Import ListNotations.
 >>
 
  *)
-(* Open Scope Z_scope. *)
 
-Definition stack := list nat.
-Definition empty_stack: (list nat) := [].
+(* Use ℤ instead of ℕ *)
+Open Scope Z_scope.
+
+(**
+
+  * Definitions of langauge
+    - const
+    - binary operations
+
+ *)
+
+Definition stack := list Z.
+Definition empty_stack: (list Z) := [].
 
 (* Binary operations *)
 Inductive binop : Type :=
@@ -67,12 +73,20 @@ Inductive binop : Type :=
 
 (* Instruction type *)
 Inductive inst : Type :=
-  | Const (i: nat)
+  | Const (i: Z)
   | Binop (op : binop)
   .
 
+(** 
+
+  * Definitions of evaluation relations
+    - evaluating a signle instruction
+    - evaluating a list of instructions
+
+ *)
+
 (* Binary Operation eval, simple and deterministic so it can be a Definition *)
-Definition bo_eval (op: binop) (x y : nat) : nat :=
+Definition bo_eval (op: binop) (x y : Z) : Z :=
   match op with
   | B_Add => x + y
   | B_Minus => x - y
@@ -81,20 +95,11 @@ Definition bo_eval (op: binop) (x y : nat) : nat :=
 
 (* Evaluate a single instruction *)
 Inductive ieval : inst -> stack -> stack -> Prop :=
-  | I_Const: forall (n : nat) (s : stack),
+  | I_Const: forall (n : Z) (s : stack),
       ieval (Const n) s (n::s)
-  | I_Binop: forall (op : binop) (x y : nat) (s : stack),
+  | I_Binop: forall (op : binop) (x y : Z) (s : stack),
       ieval (Binop op) (x :: y :: s) ((bo_eval op x y) :: s)
   .
-
-Theorem ieval_determ : forall i s s1 s2,
-  ieval i s s1 -> ieval i s s2 -> s1 = s2.
-Proof.
-  intros.
-  induction H.
-  - inversion H0. reflexivity.
-  - inversion H0. reflexivity.
-Qed.
 
 (* Evaluate a stack of instructions *)
 Inductive seval : list inst -> stack -> stack -> Prop :=
@@ -103,22 +108,58 @@ Inductive seval : list inst -> stack -> stack -> Prop :=
       ieval i s0 s1 -> seval is s1 s2 -> seval (i :: is) s0 s2
   .
 
+(** 
+
+  * Proofs of determinism for one instruction and a list of instructions
+    - shows that for the execution of the same commands starting with the
+      same initial state, will result in the same ending state
+
+ *)
+
+(* Show determinism for the execution of one instruction *)
+Theorem ieval_determ : forall i s s1 s2,
+  ieval i s s1 -> ieval i s s2 -> s1 = s2.
+Proof.
+  intros.
+  induction H.
+  - (* Const *)
+    inversion H0. reflexivity.
+  - (* Binop *)
+    inversion H0. reflexivity.
+Qed.
+
+(* The same starting state and commands must result in the same end state *)
 Theorem seval_deterministic:
   forall c s s1 s2,
   (seval c s s1) -> (seval c s s2) -> s1 = s2.
 Proof.
   intros.
   generalize dependent s2.
+  (* H : seval c s s1 *)
   induction H.
-  - intros. inversion H0. reflexivity.
-  - intros. inversion H1. subst. 
+  - (* No instructions c = [] *)
+    intros.
+    inversion H0. (* H0 : seval [] s s2 *)
+    reflexivity.
+  - (* List of instructions c = (i :: is) *)
+    intros.
+    (* IHseval : ∀ s3, seval (i :: is) s0 s3 -> s2 = s3 *)
+    inversion H1. (* H1 : seval (i :: is) s0 s3 *)
+    subst. 
     assert (s1 = s5).
+      (* H  : ieval i s0 s1 *)
+      (* H4 : ieval i s0 s5 *)
       {
         apply ieval_determ with (i := i) (s := s0); assumption.
       }
-    subst. apply IHseval in H7. assumption.
+    subst.
+    (* IHseval : ∀ s3, seval is s5 s3 -> s2 = s3 *)
+    (* H7 : seval is s5 s3 *)
+    apply IHseval in H7.
+    assumption.
 Qed.
 
+(* Examples of computations in the stack language *)
 Module StackEvalEx.
 
 Example const_ex1:
@@ -147,4 +188,4 @@ Qed.
   
 End StackEvalEx.
 
-(* Close Scope Z_scope. *)
+Close Scope Z_scope.
