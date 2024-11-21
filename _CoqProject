@@ -1,4 +1,4 @@
--R theories/ CLComp
+-R theories/ ClComp
 -arg -w -arg all
 
 theories/OpWasm.v

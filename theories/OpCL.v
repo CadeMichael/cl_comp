@@ -1,5 +1,2 @@
-Module OpCL.
-
-Definition cl := 11.
-
-End OpCL.
+(** * Operational Semantics for simple Cl language *)
+(* From ClComp Require Import OpWasm. *)

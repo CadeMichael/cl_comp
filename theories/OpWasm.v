@@ -1,5 +1,12 @@
-(**
-  * Example of ibinop.add in wasm
+From Coq Require Import Bool.Bool.
+From Coq Require Import Init.Nat.
+From Coq Require Import Arith.Arith.
+From Coq Require Import Arith.EqNat. Import Nat.
+From Coq Require Import Lia.
+From Coq Require Import Lists.List. Import ListNotations.
+(* From Coq Require Import ZArith. *)
+
+(** * Example of ibinop.add in wasm
 
 <<
     (module
@@ -27,19 +34,117 @@
   ** Inference Rules
 
 << 
-            -------------------------------- (const)
-              C ⊢ i32.const c: [] -> [i32]
+        Instr := const nat
+          | binop
 
-            ---------------------------------------- (binary operation)
-              C ⊢ i32.binop c: [i32 i32] -> [i32]
+        Binop := add
+          | minus
+          | mult
+
+            
+                         st = [ x :: y :: sx ]
+          ---------------------------------------------------- (binary operation)
+             [x :: y :: sx] =[ (binop op) ]=> ([ (op x y) :: sx ])
+
+
+               --------------------------------------------- (Const)
+                      s =[ (Const 10) ] => 10 :: s
 
 >>
 
  *)
+(* Open Scope Z_scope. *)
 
-Module OpWasm.
+Definition stack := list nat.
+Definition empty_stack: (list nat) := [].
 
-Definition c := 10.
-Check 1.
+(* Binary operations *)
+Inductive binop : Type :=
+  | B_Add
+  | B_Minus
+  | B_Mult
+  .
 
-End OpWasm.
+(* Instruction type *)
+Inductive inst : Type :=
+  | Const (i: nat)
+  | Binop (op : binop)
+  .
+
+(* Binary Operation eval, simple and deterministic so it can be a Definition *)
+Definition bo_eval (op: binop) (x y : nat) : nat :=
+  match op with
+  | B_Add => x + y
+  | B_Minus => x - y
+  | B_Mult => x * y
+  end.
+
+(* Evaluate a single instruction *)
+Inductive ieval : inst -> stack -> stack -> Prop :=
+  | I_Const: forall (n : nat) (s : stack),
+      ieval (Const n) s (n::s)
+  | I_Binop: forall (op : binop) (x y : nat) (s : stack),
+      ieval (Binop op) (x :: y :: s) ((bo_eval op x y) :: s)
+  .
+
+Theorem ieval_determ : forall i s s1 s2,
+  ieval i s s1 -> ieval i s s2 -> s1 = s2.
+Proof.
+  intros.
+  induction H.
+  - inversion H0. reflexivity.
+  - inversion H0. reflexivity.
+Qed.
+
+(* Evaluate a stack of instructions *)
+Inductive seval : list inst -> stack -> stack -> Prop :=
+  | NilI: forall s, seval [] s s (* No instructions *)
+  | ConsI: forall i is s0 s1 s2, (* One or more instructions *)
+      ieval i s0 s1 -> seval is s1 s2 -> seval (i :: is) s0 s2
+  .
+
+Theorem seval_deterministic:
+  forall c s s1 s2,
+  (seval c s s1) -> (seval c s s2) -> s1 = s2.
+Proof.
+  intros.
+  generalize dependent s2.
+  induction H.
+  - intros. inversion H0. reflexivity.
+  - intros. inversion H1. subst. 
+    assert (s1 = s5).
+      {
+        apply ieval_determ with (i := i) (s := s0); assumption.
+      }
+    subst. apply IHseval in H7. assumption.
+Qed.
+
+Module StackEvalEx.
+
+Example const_ex1:
+  ieval (Const 10) empty_stack [10].
+Proof.
+  apply I_Const.
+Qed.
+
+Example binop_ex1:
+  ieval (Binop B_Add) [3;4] [7].
+Proof.
+  apply I_Binop.
+Qed.
+
+Example stack_ex1:
+  seval [(Const 10); (Const 8); (Binop B_Mult)] empty_stack [80].
+Proof.
+  eapply ConsI.
+  - apply I_Const.
+  - eapply ConsI.
+    + apply I_Const.
+    + eapply ConsI.
+      * apply I_Binop.
+      * apply NilI.
+Qed.
+  
+End StackEvalEx.
+
+(* Close Scope Z_scope. *)
