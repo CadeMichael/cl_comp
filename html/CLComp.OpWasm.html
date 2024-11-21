@@ -123,10 +123,7 @@
 </div>
 
 <div class="doc">
-
-<div class="paragraph"> </div>
-
-<a id="lab4"></a><h1 class="section">Definitions of langauge</h1>
+<a id="lab4"></a><h2 class="section">Definitions of langauge</h2>
 
 <ul class="doclist">
 <li> const
@@ -136,14 +133,12 @@
 
 </li>
 </ul>
-
-<div class="paragraph"> </div>
-
  
 </div>
 <div class="code">
 
 <br/>
+<span class="comment">(*&nbsp;Stack&nbsp;for&nbsp;the&nbsp;language&nbsp;*)</span><br/>
 <span class="id" title="keyword">Definition</span> <a id="stack" class="idref" href="#stack"><span class="id" title="definition">stack</span></a> := <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>.<br/>
 <span class="id" title="keyword">Definition</span> <a id="empty_stack" class="idref" href="#empty_stack"><span class="id" title="definition">empty_stack</span></a>: (<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) := <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ae9a5e1034e143b218b09d8e454472bd"><span class="id" title="notation">[]</span></a>.<br/>
 
@@ -153,6 +148,7 @@
 &nbsp;&nbsp;| <a id="B_Add" class="idref" href="#B_Add"><span class="id" title="constructor">B_Add</span></a><br/>
 &nbsp;&nbsp;| <a id="B_Minus" class="idref" href="#B_Minus"><span class="id" title="constructor">B_Minus</span></a><br/>
 &nbsp;&nbsp;| <a id="B_Mult" class="idref" href="#B_Mult"><span class="id" title="constructor">B_Mult</span></a><br/>
+&nbsp;&nbsp;| <a id="B_Div" class="idref" href="#B_Div"><span class="id" title="constructor">B_Div</span></a><br/>
 &nbsp;&nbsp;.<br/>
 
 <br/>
@@ -169,7 +165,7 @@
 
 <div class="paragraph"> </div>
 
-<a id="lab5"></a><h1 class="section">Definitions of evaluation relations</h1>
+<a id="lab5"></a><h2 class="section">Definitions of evaluation relations</h2>
 
 <ul class="doclist">
 <li> evaluating a signle instruction
@@ -179,9 +175,6 @@
 
 </li>
 </ul>
-
-<div class="paragraph"> </div>
-
  
 </div>
 <div class="code">
@@ -193,6 +186,7 @@
 &nbsp;&nbsp;| <a class="idref" href="ClComp.OpWasm.html#B_Add"><span class="id" title="constructor">B_Add</span></a> =&gt; <a class="idref" href="ClComp.OpWasm.html#x:8"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.ZArith.BinInt.html#46584eddd5fdb16176a10a2843177d3a"><span class="id" title="notation">+</span></a> <a class="idref" href="ClComp.OpWasm.html#y:9"><span class="id" title="variable">y</span></a><br/>
 &nbsp;&nbsp;| <a class="idref" href="ClComp.OpWasm.html#B_Minus"><span class="id" title="constructor">B_Minus</span></a> =&gt; <a class="idref" href="ClComp.OpWasm.html#x:8"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.ZArith.BinInt.html#::Z_scope:x_'-'_x"><span class="id" title="notation">-</span></a> <a class="idref" href="ClComp.OpWasm.html#y:9"><span class="id" title="variable">y</span></a><br/>
 &nbsp;&nbsp;| <a class="idref" href="ClComp.OpWasm.html#B_Mult"><span class="id" title="constructor">B_Mult</span></a> =&gt; <a class="idref" href="ClComp.OpWasm.html#x:8"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.ZArith.BinInt.html#d3ea1afb7d81263dc23c4eb0da2a3c4e"><span class="id" title="notation">*</span></a> <a class="idref" href="ClComp.OpWasm.html#y:9"><span class="id" title="variable">y</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="ClComp.OpWasm.html#B_Div"><span class="id" title="constructor">B_Div</span></a> =&gt; <a class="idref" href="ClComp.OpWasm.html#x:8"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.ZArith.BinInt.html#d3c2652250c7a120d67ccc0e8f58ae75"><span class="id" title="notation">/</span></a> <a class="idref" href="ClComp.OpWasm.html#y:9"><span class="id" title="variable">y</span></a><br/>
 &nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
 
 <br/>
@@ -219,7 +213,7 @@
 
 <div class="paragraph"> </div>
 
-<a id="lab6"></a><h1 class="section">Proofs of determinism for one instruction and a list of instructions</h1>
+<a id="lab6"></a><h2 class="section">Proofs of determinism for one instruction and a list of instructions</h2>
 
 <ul class="doclist">
 <li> shows that for the execution of the same commands starting with the
@@ -227,9 +221,6 @@
 
 </li>
 </ul>
-
-<div class="paragraph"> </div>
-
  
 </div>
 <div class="code">
@@ -280,7 +271,13 @@
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;Examples&nbsp;of&nbsp;computations&nbsp;in&nbsp;the&nbsp;stack&nbsp;language&nbsp;*)</span><br/>
+</div>
+
+<div class="doc">
+<a id="lab7"></a><h2 class="section">Examples of computations in the stack language</h2>
+
+</div>
+<div class="code">
 <span class="id" title="keyword">Module</span> <a id="StackEvalEx" class="idref" href="#StackEvalEx"><span class="id" title="module">StackEvalEx</span></a>.<br/>
 
 <br/>
@@ -299,15 +296,25 @@
 
 <br/>
 <span class="id" title="keyword">Example</span> <a id="StackEvalEx.stack_ex1" class="idref" href="#StackEvalEx.stack_ex1"><span class="id" title="definition">stack_ex1</span></a>:<br/>
-&nbsp;&nbsp;<a class="idref" href="ClComp.OpWasm.html#seval"><span class="id" title="inductive">seval</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">[(</span></a><a class="idref" href="ClComp.OpWasm.html#Const"><span class="id" title="constructor">Const</span></a> 10<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">);</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">(</span></a><a class="idref" href="ClComp.OpWasm.html#Const"><span class="id" title="constructor">Const</span></a> 8<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">);</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">(</span></a><a class="idref" href="ClComp.OpWasm.html#Binop"><span class="id" title="constructor">Binop</span></a> <a class="idref" href="ClComp.OpWasm.html#B_Mult"><span class="id" title="constructor">B_Mult</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">)]</span></a> <a class="idref" href="ClComp.OpWasm.html#empty_stack"><span class="id" title="definition">empty_stack</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">[</span></a>80<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">]</span></a>.<br/>
+&nbsp;&nbsp;<a class="idref" href="ClComp.OpWasm.html#seval"><span class="id" title="inductive">seval</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">[(</span></a><a class="idref" href="ClComp.OpWasm.html#Const"><span class="id" title="constructor">Const</span></a> 10<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">);</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">(</span></a><a class="idref" href="ClComp.OpWasm.html#Const"><span class="id" title="constructor">Const</span></a> 80<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">);</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">(</span></a><a class="idref" href="ClComp.OpWasm.html#Binop"><span class="id" title="constructor">Binop</span></a> <a class="idref" href="ClComp.OpWasm.html#B_Div"><span class="id" title="constructor">B_Div</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">)]</span></a> <a class="idref" href="ClComp.OpWasm.html#empty_stack"><span class="id" title="definition">empty_stack</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">[</span></a>8<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">]</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="ClComp.OpWasm.html#ConsI"><span class="id" title="constructor">ConsI</span></a>.<br/>
 &nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="ClComp.OpWasm.html#I_Const"><span class="id" title="constructor">I_Const</span></a>.<br/>
 &nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="ClComp.OpWasm.html#ConsI"><span class="id" title="constructor">ConsI</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <a class="idref" href="ClComp.OpWasm.html#I_Const"><span class="id" title="constructor">I_Const</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="ClComp.OpWasm.html#ConsI"><span class="id" title="constructor">ConsI</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="comment">(*&nbsp;stack&nbsp;=&nbsp;<span class="inlinecode">80;</span> <span class="inlinecode">10</span>&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="ClComp.OpWasm.html#ConsI"><span class="id" title="constructor">ConsI</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <a class="idref" href="ClComp.OpWasm.html#I_Binop"><span class="id" title="constructor">I_Binop</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <a class="idref" href="ClComp.OpWasm.html#NilI"><span class="id" title="constructor">NilI</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="StackEvalEx.stack_ex2" class="idref" href="#StackEvalEx.stack_ex2"><span class="id" title="definition">stack_ex2</span></a>:<br/>
+&nbsp;&nbsp;<a class="idref" href="ClComp.OpWasm.html#seval"><span class="id" title="inductive">seval</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">[(</span></a><a class="idref" href="ClComp.OpWasm.html#Binop"><span class="id" title="constructor">Binop</span></a> <a class="idref" href="ClComp.OpWasm.html#B_Minus"><span class="id" title="constructor">B_Minus</span></a><a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">)]</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">[</span></a>10<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">;</span></a> 7<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#e76c6291366b599375c28eba0aae94bb"><span class="id" title="notation">]</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">[</span></a>3<a class="idref" href="http://coq.inria.fr/doc/V8.19.0/stdlib//Coq.Lists.List.html#ddd65c2f7ee73ecec433744948d846bb"><span class="id" title="notation">]</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="ClComp.OpWasm.html#ConsI"><span class="id" title="constructor">ConsI</span></a>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="ClComp.OpWasm.html#I_Binop"><span class="id" title="constructor">I_Binop</span></a>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="ClComp.OpWasm.html#NilI"><span class="id" title="constructor">NilI</span></a>.<br/>
 <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>

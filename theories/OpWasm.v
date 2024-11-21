@@ -54,13 +54,12 @@ From Coq Require Import ZArith.
 Open Scope Z_scope.
 
 (**
-
-  * Definitions of langauge
+  ** Definitions of langauge
     - const
     - binary operations
-
  *)
 
+(* Stack for the language *)
 Definition stack := list Z.
 Definition empty_stack: (list Z) := [].
 
@@ -69,6 +68,7 @@ Inductive binop : Type :=
   | B_Add
   | B_Minus
   | B_Mult
+  | B_Div
   .
 
 (* Instruction type *)
@@ -78,11 +78,9 @@ Inductive inst : Type :=
   .
 
 (** 
-
-  * Definitions of evaluation relations
+  ** Definitions of evaluation relations
     - evaluating a signle instruction
     - evaluating a list of instructions
-
  *)
 
 (* Binary Operation eval, simple and deterministic so it can be a Definition *)
@@ -91,6 +89,7 @@ Definition bo_eval (op: binop) (x y : Z) : Z :=
   | B_Add => x + y
   | B_Minus => x - y
   | B_Mult => x * y
+  | B_Div => x / y
   end.
 
 (* Evaluate a single instruction *)
@@ -109,11 +108,9 @@ Inductive seval : list inst -> stack -> stack -> Prop :=
   .
 
 (** 
-
-  * Proofs of determinism for one instruction and a list of instructions
+  ** Proofs of determinism for one instruction and a list of instructions
     - shows that for the execution of the same commands starting with the
       same initial state, will result in the same ending state
-
  *)
 
 (* Show determinism for the execution of one instruction *)
@@ -159,7 +156,7 @@ Proof.
     assumption.
 Qed.
 
-(* Examples of computations in the stack language *)
+(** ** Examples of computations in the stack language *)
 Module StackEvalEx.
 
 Example const_ex1:
@@ -175,15 +172,24 @@ Proof.
 Qed.
 
 Example stack_ex1:
-  seval [(Const 10); (Const 8); (Binop B_Mult)] empty_stack [80].
+  seval [(Const 10); (Const 80); (Binop B_Div)] empty_stack [8].
 Proof.
   eapply ConsI.
   - apply I_Const.
   - eapply ConsI.
     + apply I_Const.
-    + eapply ConsI.
+    + (* stack = [80; 10] *)
+      eapply ConsI.
       * apply I_Binop.
       * apply NilI.
+Qed.
+
+Example stack_ex2:
+  seval [(Binop B_Minus)] [10; 7] [3].
+Proof.
+  eapply ConsI.
+  - apply I_Binop. 
+  - apply NilI.
 Qed.
   
 End StackEvalEx.
