@@ -126,7 +126,7 @@ Proof.
 Qed.
 
 (* The same starting state and commands must result in the same end state *)
-Theorem seval_deterministic:
+Theorem seval_determ:
   forall c s s1 s2,
   (seval c s s1) -> (seval c s s2) -> s1 = s2.
 Proof.
