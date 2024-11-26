@@ -15,9 +15,15 @@ def empty_stack : List Int := []
 
 - Backus Naur Form to describe the **syntax**
   - defined by `binop` and `inst`
+  - to manage state we have a *total map* that holds the integer values associated
+    with a string representing a variable
+    - we can *load* and *set* values from this map by pushing and popping from the stack
+
 ```
         Instr := const Z
           | binop
+          | load
+          | set
 
         Binop := add
           | minus
@@ -30,14 +36,27 @@ def empty_stack : List Int := []
   - defined by `ieval` and `seval`
 
 ```
+s  := stack
+st := state
             
-                         st = [ x :: y :: sx ]
-          ---------------------------------------------------- (binary operation)
-             [x :: y :: sx] =[ (binop op) ]=> ([ (op x y) :: sx ])
+                         s = [ x :: y :: sx ]
+         --------------------------------------------------------- (binary operation)
+          ([x :: y :: sx], st) =[binop op]=> ((op x y) :: sx, st)
 
 
+                         s = [ x :: sx ]   v : String
+          ---------------------------------------------------- (set operation)
+             ([x :: sx], st) =[set v]=> ([sx], st[v !-> x])
+
+
+                          s : stack    st v = x
+          ---------------------------------------------------- (load operation)
+                   (s, st) =[load v]=> ((x :: s), st)
+
+
+                                  x : Int
                --------------------------------------------- (Const)
-                      s =[ (Const 10) ] => 10 :: s
+                    (s, st) =[Const x] => ((x :: s), st)
 ```
 
 -/
