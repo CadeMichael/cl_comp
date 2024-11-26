@@ -1,3 +1,5 @@
+import StackComp.ScLib
+
 /-!
 ## Defining variables for the evaluation context
 - stack defines the list of values in the programs scopes
@@ -22,8 +24,8 @@ def empty_stack : List Int := []
 ```
         Instr := const Z
           | binop
-          | load
-          | set
+          | load String
+          | set String
 
         Binop := add
           | minus
@@ -61,6 +63,8 @@ st := state
 
 -/
 
+namespace StackComp
+
 inductive binop: Type where
   | B_Add
   | B_Minus
@@ -70,54 +74,80 @@ inductive binop: Type where
 inductive inst : Type where
   | Const (i: Int)
   | Binop (op : binop)
+  | Set   (v : String)
+  | Load  (v : String)
 
 def bo_eval (op : binop) (x y : Int) : Int :=
   match op with
-  | .B_Add => x + y
-  | .B_Minus => x - y
-  | .B_Mult => x * y
-  | .B_Div => x / y
+  | .B_Add    => x + y
+  | .B_Minus  => x - y
+  | .B_Mult   => x * y
+  | .B_Div    => x / y
 
-inductive ieval : inst → stack → stack → Prop where
-  | I_Const: forall (n : Int) (s : stack),
-    ieval (.Const n) s (n :: s)
-  | I_Binop: forall (op : binop) (x y : Int) (s : stack),
-    ieval (.Binop op) (x :: y :: s) ((bo_eval op x y) :: s)
+inductive ieval : inst → (stack × state) → (stack × state) → Prop where
+  | I_Const: forall (n : Int) (s : stack) (st : state),
+    ieval (.Const n) (s, st) ((n :: s), st)
+  | I_Binop: forall (op : binop) (x y : Int) (s : stack) (st : state),
+    ieval (.Binop op) ((x :: y :: s), st) (((bo_eval op x y) :: s), st)
+  | I_Set: forall (v : String) (x : Int) (s : stack) (st : state),
+    ieval (.Set v) ((x :: s), st) (s, st[v !-> x])
+  | I_Load : forall (v : String) (x : Int) (s : stack) (st : state),
+    st v = x → ieval (.Load v) (s, st) ((x :: s), st)
 
 -- Determinism of a single evaluation step
-theorem ieval_determ {i s s1 s2} (hl : ieval i s s1) (hr: ieval i s s2):
-  s1 = s2 :=
+theorem ieval_determ {i s s1 s2 st st1 st2} (hl : ieval i (s, st) (s1, st1)) (hr: ieval i (s, st) (s2, st2)):
+  s1 = s2 ∧ st1 = st2:=
   by
-    induction hl with
-    | I_Const n  s' => cases hr with
-      | _ => rfl
-    | I_Binop op x y s' => cases hr with
-      | _ => rfl
-
-inductive seval : List inst → stack → stack → Prop where
+    cases hl
+    case I_Const n =>
+      cases hr
+      repeat (any_goals (first | constructor | rfl))
+    case I_Binop op x y s' =>
+      cases hr
+      repeat (any_goals (first | constructor | rfl))
+    case I_Set v x =>
+      cases hr
+      repeat (any_goals (first | constructor | rfl))
+    case I_Load v x h =>
+      cases hr
+      case I_Load x' h' =>
+        rw [←h, h']
+        repeat (any_goals (first | constructor | rfl))
+      
+inductive seval : List inst → (stack × state) → (stack × state) → Prop where
   | NilI s:
     seval [] s s
-  | ConsI i is s0 s1 s2:
-    ieval i s0 s1 → seval is s1 s2 → seval (i :: is) s0 s2
+  | ConsI i is s s1 s2 st st1 st2:
+    ieval i (s, st) (s1, st1) →
+    seval is (s1, st1) (s2, st2) →
+    seval (i :: is) (s, st) (s2, st2)
 
-theorem seval_determ {i s s1 s2} (hl : seval i s s1) (hr : seval i s s2):
-  s1 = s2 :=
-  by induction hl generalizing s2 with
-  | NilI s => cases hr with
-    | NilI s => rfl
-  | ConsI i'  is' s' s1' s2' heval _hseval ih => cases hr with
-    | ConsI i'' is'' s'' s1'' s2'' heval' hseval' =>
-      have h1 : s1' = s1'' := by
-        apply ieval_determ
-        exact heval
-        exact heval'
-      subst h1
-      have h2 : s2' = s2 := ih hseval'
-      subst h2
-      rfl
+theorem seval_determ {i s s1 s2 st st1 st2}
+  (hl : seval i (s, st) (s1, st1))
+  (hr : seval i (s, st) (s2, st2)):
+  s1 = s2 ∧ st1 = st2 :=
+  by
+    cases hl
+    case NilI =>
+      cases hr
+      case NilI =>
+        exact ⟨rfl, rfl⟩
+    case ConsI i is s1' st1' hi hs =>
+      cases hr
+      case ConsI s'' st1'' hi' hs' =>
+        have h1 : s1' = s'' ∧ st1' = st1'' := by
+          apply ieval_determ
+          exact hi
+          exact hi'
+        let ⟨h1l, h1r⟩ := h1
+        subst h1r
+        subst h1l
+        apply seval_determ
+        exact hs
+        exact hs'
 
 theorem stack_ex1:
-  seval [(.Const 10), (.Const 80), (.Binop .B_Div)] empty_stack [8] :=
+  seval [(.Const 10), (.Const 80), (.Binop .B_Div)] (empty_stack, empty_state) ([8], empty_state) :=
   by
     apply seval.ConsI
     { apply ieval.I_Const }
@@ -131,3 +161,5 @@ theorem stack_ex1:
       simp
     rw [h]
     apply seval.NilI
+
+end StackComp
