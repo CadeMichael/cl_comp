@@ -1,4 +1,4 @@
 import StackComp
 
 def main : IO Unit :=
-  IO.println s!"Imp -> Stack"
+  IO.println s!"Simp -> Stack"

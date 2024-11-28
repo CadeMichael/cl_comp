@@ -61,22 +61,33 @@ st := state
                     (s, st) =[Const x] => ((x :: s), st)
 ```
 
+## Proving Determinism
+
+- for our stack language we will prove that every sequence of instructions executed
+  with the same starting stack and state, will result in the same end stack and end state.
+- to accomplish this like with defining the *evaluation relation* we show the determinism
+  of one instruction `ieval` and then use this theory to prove that executing a sequence
+  of instructions (`List instr`) is also deterministic
+
 -/
 
 namespace StackComp
 
+/-! define all binary operations -/
 inductive binop: Type where
   | B_Add
   | B_Minus
   | B_Mult
   | B_Div
 
+/-! define all instructions -/
 inductive inst : Type where
   | Const (i: Int)
   | Binop (op : binop)
   | Set   (v : String)
   | Load  (v : String)
 
+/-! evaluation function for binary operations -/
 def bo_eval (op : binop) (x y : Int) : Int :=
   match op with
   | .B_Add    => x + y
@@ -84,6 +95,7 @@ def bo_eval (op : binop) (x y : Int) : Int :=
   | .B_Mult   => x * y
   | .B_Div    => x / y
 
+/-! Evaluation relation for a single instruction -/
 inductive ieval : inst → (stack × state) → (stack × state) → Prop where
   | I_Const: forall (n : Int) (s : stack) (st : state),
     ieval (.Const n) (s, st) ((n :: s), st)
@@ -94,13 +106,17 @@ inductive ieval : inst → (stack × state) → (stack × state) → Prop where
   | I_Load : forall (v : String) (x : Int) (s : stack) (st : state),
     st v = x → ieval (.Load v) (s, st) ((x :: s), st)
 
--- Determinism of a single evaluation step
-theorem ieval_determ {i s s1 s2 st st1 st2} (hl : ieval i (s, st) (s1, st1)) (hr: ieval i (s, st) (s2, st2)):
+/-! Show that the execution of one instruction is deterministic -/
+theorem ieval_determ {i s s1 s2 st st1 st2}
+  (hl : ieval i (s, st) (s1, st1))
+  (hr: ieval i (s, st) (s2, st2)):
   s1 = s2 ∧ st1 = st2:=
   by
+    -- iterate over all possible instructions instruction
     cases hl
     case I_Const n =>
       cases hr
+      -- break apart the ∧ and solve both sides
       repeat (any_goals (first | constructor | rfl))
     case I_Binop op x y s' =>
       cases hr
@@ -111,9 +127,13 @@ theorem ieval_determ {i s s1 s2 st st1 st2} (hl : ieval i (s, st) (s1, st1)) (hr
     case I_Load v x h =>
       cases hr
       case I_Load x' h' =>
+        -- h  : st v = x
+        -- h' : st v = x'
+        -- ⊢ ((x :: s) = (x' :: s)) ∧ st = st
         rw [←h, h']
         repeat (any_goals (first | constructor | rfl))
       
+/-! Evaluation relation for a list of instructions -/
 inductive seval : List inst → (stack × state) → (stack × state) → Prop where
   | NilI s:
     seval [] s s
@@ -122,6 +142,7 @@ inductive seval : List inst → (stack × state) → (stack × state) → Prop w
     seval is (s1, st1) (s2, st2) →
     seval (i :: is) (s, st) (s2, st2)
 
+/-! Show that the execution of a sequence of instructions is deterministic -/
 theorem seval_determ {i s s1 s2 st st1 st2}
   (hl : seval i (s, st) (s1, st1))
   (hr : seval i (s, st) (s2, st2)):
@@ -146,6 +167,7 @@ theorem seval_determ {i s s1 s2 st st1 st2}
         exact hs
         exact hs'
 
+/-! An example of executing a sequence of instructions -/
 theorem stack_ex1:
   seval [(.Const 10), (.Const 80), (.Binop .B_Div)] (empty_stack, empty_state) ([8], empty_state) :=
   by
