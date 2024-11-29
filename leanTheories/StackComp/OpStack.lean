@@ -73,21 +73,21 @@ st := state
 
 namespace StackComp
 
-/-! define all binary operations -/
-inductive binop: Type where
+/-! Define all binary operations -/
+inductive binop : Type where
   | B_Add
   | B_Minus
   | B_Mult
   | B_Div
 
-/-! define all instructions -/
+/-! Define all instructions -/
 inductive inst : Type where
   | Const (i: Int)
   | Binop (op : binop)
   | Set   (v : String)
   | Load  (v : String)
 
-/-! evaluation function for binary operations -/
+/-! Evaluation function for binary operations -/
 def bo_eval (op : binop) (x y : Int) : Int :=
   match op with
   | .B_Add    => x + y
@@ -97,20 +97,20 @@ def bo_eval (op : binop) (x y : Int) : Int :=
 
 /-! Evaluation relation for a single instruction -/
 inductive ieval : inst → (stack × state) → (stack × state) → Prop where
-  | I_Const: forall (n : Int) (s : stack) (st : state),
+  | I_Const: ∀ (n : Int) (s : stack) (st : state),
     ieval (.Const n) (s, st) ((n :: s), st)
-  | I_Binop: forall (op : binop) (x y : Int) (s : stack) (st : state),
+  | I_Binop: ∀ (op : binop) (x y : Int) (s : stack) (st : state),
     ieval (.Binop op) ((x :: y :: s), st) (((bo_eval op x y) :: s), st)
-  | I_Set: forall (v : String) (x : Int) (s : stack) (st : state),
+  | I_Set: ∀ (v : String) (x : Int) (s : stack) (st : state),
     ieval (.Set v) ((x :: s), st) (s, st[v !-> x])
-  | I_Load : forall (v : String) (x : Int) (s : stack) (st : state),
+  | I_Load : ∀ (v : String) (x : Int) (s : stack) (st : state),
     st v = x → ieval (.Load v) (s, st) ((x :: s), st)
 
 /-! Show that the execution of one instruction is deterministic -/
 theorem ieval_determ {i s s1 s2 st st1 st2}
   (hl : ieval i (s, st) (s1, st1))
   (hr: ieval i (s, st) (s2, st2)):
-  s1 = s2 ∧ st1 = st2:=
+  s1 = s2 ∧ st1 = st2 :=
   by
     -- iterate over all possible instructions instruction
     cases hl
@@ -142,7 +142,7 @@ inductive seval : List inst → (stack × state) → (stack × state) → Prop w
     seval is (s1, st1) (s2, st2) →
     seval (i :: is) (s, st) (s2, st2)
 
-/-! Show that the execution of a sequence of instructions is deterministic -/
+/-! Show that executing a sequence of instructions is deterministic -/
 theorem seval_determ {i s s1 s2 st st1 st2}
   (hl : seval i (s, st) (s1, st1))
   (hr : seval i (s, st) (s2, st2)):
