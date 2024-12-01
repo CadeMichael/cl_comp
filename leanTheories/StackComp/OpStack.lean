@@ -87,6 +87,20 @@ inductive inst : Type where
   | Set   (v : String)
   | Load  (v : String)
 
+instance : Repr binop where
+  reprPrec
+    | .B_Add, _ => "B_Add"
+    | .B_Minus, _ => "B_Minus"
+    | .B_Mult, _ => "B_Mult"
+    | .B_Div, _ => "B_Div"
+
+instance : Repr inst where
+  reprPrec
+    | .Const i, _ => "(Const " ++ repr i ++ ")"
+    | .Binop op, _ => "(Binop " ++ repr op ++ ")"
+    | .Set v, _ => "(Set " ++ repr v ++ ")"
+    | .Load v, _ => "(Load " ++ repr v ++ ")"
+
 /-! Evaluation function for binary operations -/
 def bo_eval (op : binop) (x y : Int) : Int :=
   match op with
