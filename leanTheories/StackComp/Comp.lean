@@ -16,10 +16,10 @@ def comp_aexp (a : aexp) : (List inst) :=
   match a with
   | .ANum i       => [.Const i]
   | .AId v        => [.Load v]
-  | .APlus a1 a2  => (comp_aexp a2) ++ (comp_aexp a1) ++ [(.Binop .B_Add)]
-  | .AMinus a1 a2 => (comp_aexp a2) ++ (comp_aexp a1) ++ [(.Binop .B_Minus)]
-  | .AMult a1 a2  => (comp_aexp a2) ++ (comp_aexp a1) ++ [(.Binop .B_Mult)]
-  | .ADiv a1 a2   => (comp_aexp a2) ++ (comp_aexp a1) ++ [(.Binop .B_Div)]
+  | .APlus a1 a2  => (comp_aexp a1) ++ (comp_aexp a2) ++ [(.Binop .B_Add)]
+  | .AMinus a1 a2 => (comp_aexp a1) ++ (comp_aexp a2) ++ [(.Binop .B_Minus)]
+  | .AMult a1 a2  => (comp_aexp a1) ++ (comp_aexp a2) ++ [(.Binop .B_Mult)]
+  | .ADiv a1 a2   => (comp_aexp a1) ++ (comp_aexp a2) ++ [(.Binop .B_Div)]
 
 def comp_com (c : com) : (List inst) := 
   match c with
@@ -83,11 +83,11 @@ theorem comp_aexp_cert {a st i}:
       have h1 : aeval st a1 = i1 := rfl
       have h2 : aeval st a2 = i2 := rfl
       rw [h1, h2] at h
-      have eval_a2 : seval (comp_aexp a2) (s, st) (i2 :: s, st) := ha2 h2
-      have eval_a1 : seval (comp_aexp a1) (i2 :: s, st) (i1 :: i2 :: s, st) := by 
-        apply ha1
-        apply h1
-      have eval_a1_a2 : seval (comp_aexp a2 ++ comp_aexp a1) (s, st) (i1 :: i2 :: s, st) := by
+      have eval_a2 : seval (comp_aexp a1) (s, st) (i1 :: s, st) := ha1 h1
+      have eval_a1 : seval (comp_aexp a2) (i1 :: s, st) (i2 :: i1 :: s, st) := by 
+        apply ha2
+        apply h2
+      have eval_a1_a2 : seval (comp_aexp a1 ++ comp_aexp a2) (s, st) (i2 :: i1 :: s, st) := by
         apply seval_append
         exact eval_a2
         apply eval_a1
@@ -108,11 +108,11 @@ theorem comp_aexp_cert {a st i}:
       have h1 : aeval st a1 = i1 := rfl
       have h2 : aeval st a2 = i2 := rfl
       rw [h1, h2] at h
-      have eval_a2 : seval (comp_aexp a2) (s, st) (i2 :: s, st) := ha2 h2
-      have eval_a1 : seval (comp_aexp a1) (i2 :: s, st) (i1 :: i2 :: s, st) := by 
-        apply ha1
-        apply h1
-      have eval_a1_a2 : seval (comp_aexp a2 ++ comp_aexp a1) (s, st) (i1 :: i2 :: s, st) := by
+      have eval_a2 : seval (comp_aexp a1) (s, st) (i1 :: s, st) := ha1 h1
+      have eval_a1 : seval (comp_aexp a2) (i1 :: s, st) (i2 :: i1 :: s, st) := by 
+        apply ha2
+        apply h2
+      have eval_a1_a2 : seval (comp_aexp a1 ++ comp_aexp a2) (s, st) (i2 :: i1 :: s, st) := by
         apply seval_append
         exact eval_a2
         apply eval_a1
@@ -133,11 +133,11 @@ theorem comp_aexp_cert {a st i}:
       have h1 : aeval st a1 = i1 := rfl
       have h2 : aeval st a2 = i2 := rfl
       rw [h1, h2] at h
-      have eval_a2 : seval (comp_aexp a2) (s, st) (i2 :: s, st) := ha2 h2
-      have eval_a1 : seval (comp_aexp a1) (i2 :: s, st) (i1 :: i2 :: s, st) := by 
-        apply ha1
-        apply h1
-      have eval_a1_a2 : seval (comp_aexp a2 ++ comp_aexp a1) (s, st) (i1 :: i2 :: s, st) := by
+      have eval_a2 : seval (comp_aexp a1) (s, st) (i1 :: s, st) := ha1 h1
+      have eval_a1 : seval (comp_aexp a2) (i1 :: s, st) (i2 :: i1 :: s, st) := by 
+        apply ha2
+        apply h2
+      have eval_a1_a2 : seval (comp_aexp a1 ++ comp_aexp a2) (s, st) (i2 :: i1 :: s, st) := by
         apply seval_append
         exact eval_a2
         apply eval_a1
@@ -158,11 +158,11 @@ theorem comp_aexp_cert {a st i}:
       have h1 : aeval st a1 = i1 := rfl
       have h2 : aeval st a2 = i2 := rfl
       rw [h1, h2] at h
-      have eval_a2 : seval (comp_aexp a2) (s, st) (i2 :: s, st) := ha2 h2
-      have eval_a1 : seval (comp_aexp a1) (i2 :: s, st) (i1 :: i2 :: s, st) := by 
-        apply ha1
-        apply h1
-      have eval_a1_a2 : seval (comp_aexp a2 ++ comp_aexp a1) (s, st) (i1 :: i2 :: s, st) := by
+      have eval_a2 : seval (comp_aexp a1) (s, st) (i1 :: s, st) := ha1 h1
+      have eval_a1 : seval (comp_aexp a2) (i1 :: s, st) (i2 :: i1 :: s, st) := by 
+        apply ha2
+        apply h2
+      have eval_a1_a2 : seval (comp_aexp a1 ++ comp_aexp a2) (s, st) (i2 :: i1 :: s, st) := by
         apply seval_append
         exact eval_a2
         apply eval_a1

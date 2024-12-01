@@ -114,7 +114,7 @@ inductive ieval : inst → (stack × state) → (stack × state) → Prop where
   | I_Const: ∀ (n : Int) (s : stack) (st : state),
     ieval (.Const n) (s, st) ((n :: s), st)
   | I_Binop: ∀ (op : binop) (x y : Int) (s : stack) (st : state),
-    ieval (.Binop op) ((x :: y :: s), st) (((bo_eval op x y) :: s), st)
+    ieval (.Binop op) ((y :: x :: s), st) (((bo_eval op x y) :: s), st)
   | I_Set: ∀ (v : String) (x : Int) (s : stack) (st : state),
     ieval (.Set v) ((x :: s), st) (s, st[v !-> x])
   | I_Load : ∀ (v : String) (x : Int) (s : stack) (st : state),
@@ -181,9 +181,25 @@ theorem seval_determ {i s s1 s2 st st1 st2}
         exact hs
         exact hs'
 
-/-! An example of executing a sequence of instructions -/
+/-!
+An example of executing a sequence of instructions
+
+```
+(module
+    (func (export "_start") (result i32)
+    ;; load 80 onto the stack
+    i32.const 80
+    ;; load 10 onto the stack
+    i32.const 10
+    ;; divide
+    i32.div_u
+    return
+    )
+)
+```
+-/
 theorem stack_ex1:
-  seval [(.Const 10), (.Const 80), (.Binop .B_Div)] (empty_stack, empty_state) ([8], empty_state) :=
+  seval [(.Const 80), (.Const 10), (.Binop .B_Div)] (empty_stack, empty_state) ([8], empty_state) :=
   by
     apply seval.ConsI
     { apply ieval.I_Const }
