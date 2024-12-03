@@ -41,9 +41,9 @@ def empty_stack : List Int := []
 s  := stack
 st := state
             
-                         s = [ x :: y :: sx ]
+                         s = [ y :: x :: sx ]
          --------------------------------------------------------- (binary operation)
-          ([x :: y :: sx], st) =[binop op]=> ((op x y) :: sx, st)
+          ([y :: x :: sx], st) =[binop op]=> ((op x y) :: sx, st)
 
 
                          s = [ x :: sx ]   v : String
