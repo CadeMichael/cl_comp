@@ -74,81 +74,9 @@ theorem comp_aexp_cert {a st i}:
       apply ieval.I_Load
       rw [h]
       apply seval.NilI
-    | APlus a1 a2 ha1 ha2 =>
-      intro h
-      rw [aeval] at h
-      rw [comp_aexp]
-      let i1 := aeval st a1
-      let i2 := aeval st a2
-      have h1 : aeval st a1 = i1 := rfl
-      have h2 : aeval st a2 = i2 := rfl
-      rw [h1, h2] at h
-      have eval_a2 : seval (comp_aexp a1) (s, st) (i1 :: s, st) := ha1 h1
-      have eval_a1 : seval (comp_aexp a2) (i1 :: s, st) (i2 :: i1 :: s, st) := by 
-        apply ha2
-        apply h2
-      have eval_a1_a2 : seval (comp_aexp a1 ++ comp_aexp a2) (s, st) (i2 :: i1 :: s, st) := by
-        apply seval_append
-        exact eval_a2
-        apply eval_a1
-      apply seval_append
-      exact eval_a1_a2
-      apply seval.ConsI
-      apply ieval.I_Binop
-      rw [←h]
-      rw [bo_eval]
-      simp
-      apply seval.NilI
-    | AMinus a1 a2 ha1 ha2 =>
-      intro h
-      rw [aeval] at h
-      rw [comp_aexp]
-      let i1 := aeval st a1
-      let i2 := aeval st a2
-      have h1 : aeval st a1 = i1 := rfl
-      have h2 : aeval st a2 = i2 := rfl
-      rw [h1, h2] at h
-      have eval_a2 : seval (comp_aexp a1) (s, st) (i1 :: s, st) := ha1 h1
-      have eval_a1 : seval (comp_aexp a2) (i1 :: s, st) (i2 :: i1 :: s, st) := by 
-        apply ha2
-        apply h2
-      have eval_a1_a2 : seval (comp_aexp a1 ++ comp_aexp a2) (s, st) (i2 :: i1 :: s, st) := by
-        apply seval_append
-        exact eval_a2
-        apply eval_a1
-      apply seval_append
-      exact eval_a1_a2
-      apply seval.ConsI
-      apply ieval.I_Binop
-      rw [←h]
-      rw [bo_eval]
-      simp
-      apply seval.NilI
-    | AMult a1 a2 ha1 ha2 =>
-      intro h
-      rw [aeval] at h
-      rw [comp_aexp]
-      let i1 := aeval st a1
-      let i2 := aeval st a2
-      have h1 : aeval st a1 = i1 := rfl
-      have h2 : aeval st a2 = i2 := rfl
-      rw [h1, h2] at h
-      have eval_a2 : seval (comp_aexp a1) (s, st) (i1 :: s, st) := ha1 h1
-      have eval_a1 : seval (comp_aexp a2) (i1 :: s, st) (i2 :: i1 :: s, st) := by 
-        apply ha2
-        apply h2
-      have eval_a1_a2 : seval (comp_aexp a1 ++ comp_aexp a2) (s, st) (i2 :: i1 :: s, st) := by
-        apply seval_append
-        exact eval_a2
-        apply eval_a1
-      apply seval_append
-      exact eval_a1_a2
-      apply seval.ConsI
-      apply ieval.I_Binop
-      rw [←h]
-      rw [bo_eval]
-      simp
-      apply seval.NilI
+    | APlus a1 a2 ha1 ha2
+    | AMinus a1 a2 ha1 ha2
+    | AMult a1 a2 ha1 ha2
     | ADiv a1 a2 ha1 ha2 =>
       intro h
       rw [aeval] at h
@@ -180,6 +108,51 @@ theorem comp_state_cert {c s st st1 st2}
   (hr : seval (comp_com c) (empty_stack, st) (s, st2)):
   st1 = st2 :=
   by
-    sorry
+    cases hl
+    case C_Asgn a' i x ha' => 
+      rw [comp_com] at hr
+      have hr': seval (comp_aexp a' ++ [inst.Set x]) (empty_stack, st) (empty_stack, st[x !-> i]) := by
+        apply seval_append
+        apply comp_aexp_cert
+        exact ha'
+        apply seval.ConsI
+        apply ieval.I_Set
+        apply seval.NilI
+      have h_determ : s = empty_stack ∧ st2 = state.update x i st :=
+        seval_determ hr hr'  
+      let ⟨hdl, hdr⟩ := h_determ
+      rw [hdr]
+    case C_Seq c' c'' st' a a' =>
+      rw [comp_com] at hr
+      have h_split : comp_com (com.CSeq c' c'') = comp_com c' ++ comp_com c'' := by
+        rfl
+      have hc1: seval (comp_com c'') (empty_stack, st') (s, st2) := by
+        sorry
+      apply comp_state_cert
+      apply a'
+      apply hc1
+      
+      -- have eval_a': seval (comp_aexp a') (empty_stack, st) (i :: empty_stack, st) :=
+        -- by
+          -- apply comp_aexp_cert
+          -- exact ha'
+      -- have eval_set: seval [inst.Set x] (i :: empty_stack, st) (empty_stack, st[x !-> i]) :=
+        -- by
+          -- apply seval.ConsI
+          -- apply ieval.I_Set
+          -- apply seval.NilI
+      -- have eval_full: seval (comp_aexp a' ++ [inst.Set x]) (empty_stack, st) (empty_stack, st[x !-> i]) :=
+        -- by
+          -- apply seval_append
+          -- apply eval_a'
+          -- apply eval_set
+      -- have hs: s = empty_stack := by
+        -- rw [eval_full] at hr
+    -- induction c generalizing s st with
+    -- | CAsgn x a =>
+      -- rw [comp_com] at hr
+      
+        
+        
 
 end StackComp
