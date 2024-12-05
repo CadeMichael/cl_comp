@@ -131,28 +131,33 @@ theorem comp_state_cert {c s st st1 st2}
       apply comp_state_cert
       apply a'
       apply hc1
-      
-      -- have eval_a': seval (comp_aexp a') (empty_stack, st) (i :: empty_stack, st) :=
-        -- by
-          -- apply comp_aexp_cert
-          -- exact ha'
-      -- have eval_set: seval [inst.Set x] (i :: empty_stack, st) (empty_stack, st[x !-> i]) :=
-        -- by
-          -- apply seval.ConsI
-          -- apply ieval.I_Set
-          -- apply seval.NilI
-      -- have eval_full: seval (comp_aexp a' ++ [inst.Set x]) (empty_stack, st) (empty_stack, st[x !-> i]) :=
-        -- by
-          -- apply seval_append
-          -- apply eval_a'
-          -- apply eval_set
-      -- have hs: s = empty_stack := by
-        -- rw [eval_full] at hr
-    -- induction c generalizing s st with
+    -- induction c generalizing s st st1 st2 with
     -- | CAsgn x a =>
-      -- rw [comp_com] at hr
-      
-        
-        
+      -- let i := aeval st a
+      -- have hr': seval (comp_aexp a ++ [inst.Set x]) (empty_stack, st) (empty_stack, st[x !-> i]) := by
+        -- apply seval_append
+        -- apply comp_aexp_cert
+        -- rfl
+        -- apply seval.ConsI
+        -- apply ieval.I_Set
+        -- apply seval.NilI
+      -- have h_determ : s = empty_stack ∧ st2 = state.update x i st :=
+        -- seval_determ hr hr'  
+      -- let ⟨hdl, hdr⟩ := h_determ
+      -- rw [hdr]      
+      -- have ceval_st: ceval (com.CAsgn x a) st (st[x !-> i]) := by
+        -- apply ceval.C_Asgn
+        -- rfl
+      -- have hs1 : st1 = st[x !-> i] := by
+        -- exact ceval_determ hl ceval_st
+      -- apply hs1
+    -- | CSeq c1 c2 ihc1 ihc2 =>
+      -- cases hl
+      -- case C_Seq st1' hc1 hc2 =>
+        -- rw [comp_com] at hr
+        -- have hs {s'}: seval (comp_com c1) (empty_stack, st) (s', st1) →
+          -- seval (comp_com c2) (s', st1) (s, st2) → seval (comp_com c1 ++ comp_com c2) (empty_stack, st) (s, st2) := by
+          -- apply seval_append
+        -- sorry
 
 end StackComp

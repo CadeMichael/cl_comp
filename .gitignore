@@ -46,3 +46,6 @@ time-of-build-before.log
 time-of-build-both.log
 time-of-build-pretty.log
 /.lake
+*/node_modules/
+*node_modules/
+node_modules/
