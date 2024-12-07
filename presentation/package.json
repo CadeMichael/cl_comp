@@ -1,5 +1,5 @@
 {
-  "name": "monad",
+  "name": "cl-comp",
   "type": "module",
   "private": true,
   "scripts": {

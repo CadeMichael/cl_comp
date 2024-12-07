@@ -1,34 +1,9 @@
----
-# You can also start simply with 'default'
-theme: default
-title: Verified Arithmetic to Wasm Compiler in Lean4
-info: |
-  ## Lean4 for PL research
-
-# apply unocss classes to the current slide
-# class: text-center
-transition: slide-left
-# enable MDC Syntax: https://sli.dev/features/mdc
-mdc: true
-# take snapshot for each slide in the overview
-overviewSnapshots: true
-hideInToc: true
----
-
-# Verified Arithmetic to Wasm Compiler in Lean4
-
-<Toc v-click minDepth="1" maxDepth="1"></Toc>
-
----
-
 # Using Lean for Programming Languages research
 
 - For the last three decades Coq has led the charge in the programming languages wing of the formal verification and proof assistant world.
 - Lean has started to gain ground in the mathematics community since its release in 2013, but has not yet made the leap to the world of programming languages.
 - This paper is an attempt to show the utility of using Lean for studying programming languages by defining the semantics for two small programming languages and verifying a compiler from one to the other.
 - [Project Git Repo](https://github.com/CadeMichael/cl_comp)
-
----
 
 # Syntax and Semantics
 
@@ -37,16 +12,12 @@ hideInToc: true
 - we will use transition relations to show the big step operational semantics of each language
     - in Lean these are represented as inductive relations
 
----
-
 ## Simp
 
 - SIMP := Simpler Imp
     - SIMP is a boiled down imp with arithmetic, assignment, and sequence.
     - it is used to represent an imperative language being compiled to Wasm.
     - future work would see SIMP be expanded to the point where it models CLite, Python etc...
-
----
 
 ### Syntax
 
@@ -67,8 +38,6 @@ inductive com : Type where
   | CAsgn (x : String) (a : aexp)
   | CSeq  (c1 c2 : com)
 ```
-
----
 
 ### Semantics
 
@@ -97,8 +66,6 @@ theorem ceval_determ {c st st1 st2} /- determinism of SIMP evaluation, full proo
   st1 = st2 :=
 ```
 
----
-
 ## Stack
 
 - SIMP is very generic and most PL courses cover the formulation of an IMP like language.
@@ -122,8 +89,6 @@ theorem ceval_determ {c st st1 st2} /- determinism of SIMP evaluation, full proo
 )
 ```
 
----
-
 ### Syntax
 
 - we define *inst* for an instruction and *binop* for a binary operation on integers.
@@ -143,8 +108,6 @@ inductive inst : Type where
   | Set   (v : String)
   | Load  (v : String)
 ```
-
----
 
 ### Semantics
 
@@ -174,8 +137,6 @@ inductive seval : List inst → (stack × state) → (stack × state) → Prop w
     seval (i :: is) (s, st) (s2, st2)
 ```
 
----
-
 ## Coq vs Lean
 
 - for the most part the proofs of determinism have been omitted for brevity but I will highlight one to show how proofs in Lean differ from those in Coq.
@@ -184,8 +145,6 @@ inductive seval : List inst → (stack × state) → (stack × state) → Prop w
     - This was the most intriguing aspect of Lean that I found during my self taught crash course to prepare for this project.
         - it is also what makes Lean appear to be extremely underutilized in the world of PL research
     - I will include the determinism proof of `seval` to highlight this functional style
-
----
 
 ### Lean proof of Stack's determinism
 
@@ -215,8 +174,6 @@ theorem seval_determ {i s s1 s2 st st1 st2}
         exact hs'
 ```
 
----
-
 # Compilation
 
 - in order for a compiler to be "verified" it must verify the preservation of certain semantic properties
@@ -226,8 +183,6 @@ theorem seval_determ {i s s1 s2 st st1 st2}
 - for these behaviors we assume the source program is *correct* meaning it can be executed and will not result in an error.
 - for this project I was able to write a small compiler and verify the preservation of arithmetic behaviors but could not go further with other behaviors due to limited time.
 
-
----
 
 ## Compiler function
 
@@ -250,8 +205,6 @@ def comp_com (c : com) : (List inst) := /- compile SIMP commands to Stack instru
 
 
 ```
-
----
 
 ## Compiler Proofs of behavioral preservation
 
@@ -280,8 +233,6 @@ theorem comp_aexp_cert {a st i}:
     | APlus a1 a2 ha1 ha2 | AMinus a1 a2 ha1 ha2 | AMult a1 a2 ha1 ha2 | ADiv a1 a2 ha1 ha2 => /- omitted -/
 ```
 
----
-
 # Final Thoughts
 
 - the behavioral that I could not prove was that the states remained the same after execution.
@@ -294,19 +245,12 @@ theorem comp_aexp_cert {a st i}:
 - I feel that I have shown the utility of Lean for PL research and how it is more than capable of formalizing languages, writing functions (compilers), and formalizing proofs about the langauges it defines.
 - Coq is still the leader of PL research but I hope to show that with some enthusiastic Lean users, it might not remain so.
 
----
-
 # References and Inspiration
 
 - Sandrine Blazy. 2024. From Mechanized Semantics to Verified Compilation: The Clight Semantics of CompCert. In Fundamental Approaches to Software Engineering, Dirk Beyer and Ana Cavalcanti (Eds.). Lecture Notes in Computer Science, Vol. 14573. Springer Nature Switzerland, Cham, 1–21. https://doi.org/10.1007/978-3-031-57259-3_1
 - Joachim Breitner, Philippa Gardner, Jaehyun Lee, Sam Lindley, Matija Pretnar, Xiaojia Rao, Andreas Rossberg, et al. 2023. Wasm SpecTec: Engineering a Formal Language Standard. arXiv (Nov. 2023). http://arxiv.org/abs/2311.07223
 - Robert Kleffner. 2017. A Foundation for Typed Concatenative Languages. Master’s thesis. Northeastern University, Boston, Massachusetts. https://www2.ccs.neu.edu/racket/pubs/dissertation-kleffner.pdf
 - Xavier Leroy. 2009. Formal Verification of a Realistic Compiler. Commun. ACM 52, 7 (July 2009), 107–115. https://doi.org/10.1145/1538788.1538814
-
----
-
-# References cont.
-
 - Benjamin C. Pierce, Arthur Azevedo de Amorim, Chris Casinghino, Marco Gaboardi, Michael Greenberg, Cătălin Hriţcu, Vilhelm Sjöberg, Brent Yorgey, et al. 2024. Logical Foundations (current ed.). University of Pennsylvania. https://softwarefoundations.cis.upenn.edu/lf-current/ Online textbook.
 - Xiaojia Rao, Aïna Linn Georges, Maxime Legoupil, Conrad Watt, Jean Pichon-Pharabod, Philippa Gardner, and Lars Birkedal. 2023. Iris-Wasm: Robust and Modular Verification of WebAssembly Programs. Proceedings of the ACM on Programming Languages 7, PLDI (June 2023), 1096–1120. https://doi.org/10.1145/3591265
 - The Lean Community. 2024. Theorem Proving in Lean 4. lean-lang.org. https://lean-lang.org/theorem_proving_in_lean4/ Online book.
