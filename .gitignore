@@ -49,3 +49,6 @@ time-of-build-pretty.log
 */node_modules/
 *node_modules/
 node_modules/
+*/.slidev/
+*.slidev/
+.slidev/
